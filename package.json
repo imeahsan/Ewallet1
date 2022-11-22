@@ -14,7 +14,10 @@
     "react": "18.1.0",
     "react-native": "0.70.6",
     "react-native-date-picker": "^4.2.6",
+    "react-native-gifted-charts": "^1.2.41",
+    "react-native-linear-gradient": "^2.6.2",
     "react-native-paper": "^5.0.0-rc.10",
+    "react-native-svg": "^13.6.0",
     "react-native-vector-icons": "^9.2.0"
   },
   "devDependencies": {
