@@ -31,7 +31,7 @@ const Expenses = () => {
         Apply Filters
       </Text>
       <Button
-        title="Select Date From"
+        title="Select Start Date"
         onPress={() => setOpen(true)}
         style={{marginTop: 5, marginBottom: 5}}
       />
@@ -51,7 +51,7 @@ const Expenses = () => {
 
       <View style={{marginTop: 2}}>
         <Button
-          title="Select Date From"
+          title="Select End Date "
           onPress={() => setOpen(true)}
           style={{marginTop: 5, marginBottom: 5}}
         />

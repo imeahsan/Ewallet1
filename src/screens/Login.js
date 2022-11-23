@@ -9,6 +9,7 @@ import {
   View,
 } from 'react-native';
 import {Text} from 'react-native-paper';
+import {TouchableOpacity} from 'react-native';
 
 const Login = () => {
   return (
@@ -42,11 +43,14 @@ const Login = () => {
           right={<TextInput.Affix text="required" />}
           style={{margin: 10}}
         />
+        <TouchableOpacity style={{alignSelf: 'center', marginTop: 20}}>
+          <Text>Not Registered? Create an account now</Text>
+        </TouchableOpacity>
         <Button
           icon="login"
           mode="contained"
           onPress={() => console.log('Password toh daal bay')}
-          style={{marginHorizontal: 100, marginTop: 50, padding: 5}}>
+          style={{marginHorizontal: 100, marginTop: 20, padding: 5}}>
           Login
         </Button>
       </View>

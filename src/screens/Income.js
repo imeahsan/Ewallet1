@@ -27,11 +27,13 @@ const Income = () => {
           label={'Amount'}
           placeholder="Income Amount"
           style={{marginTop: 5, marginBottom: 5}}
+          right={<TextInput.Affix text="required" />}
         />
         <Button title="Add Amount" />
         <TextInput
           label={'Expense Limit'}
           placeholder="Expense Limit"
+          right={<TextInput.Affix text="required" />}
           style={{marginTop: 5, marginBottom: 5}}
         />
         <Button title="Set Limit"></Button>

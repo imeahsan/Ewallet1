@@ -6,7 +6,8 @@ import Categories from './screens/Categories';
 import Expenses from './screens/Expenses';
 import Income from './screens/Income';
 import profile from './screens/UpdateProfile';
-
+import Login from './screens/Login';
+import SignUp from './screens/Signup';
 // routes
 const ExpensesRoute = Expenses;
 const IncomeRoute = Income;
@@ -48,6 +49,8 @@ const Main = () => {
       onIndexChange={setIndex}
       renderScene={renderScene}
     />
+    // <Login />
+    // <SignUp />
   );
 };
 

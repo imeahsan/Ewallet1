@@ -17,6 +17,7 @@ const Categories = () => {
       <TextInput
         label="Category Name"
         placeholder="Category Name"
+        right={<TextInput.Affix text="required" />}
         style={{marginTop: 5, marginBottom: 5}}
       />
       <Button title="Add Category"></Button>
@@ -26,14 +27,14 @@ const Categories = () => {
         <DataTable style={{marginTop: 5}}>
           <DataTable.Header>
             <DataTable.Title>Category</DataTable.Title>
-            <DataTable.Title >No of Expenses</DataTable.Title>
+            <DataTable.Title>No of Expenses</DataTable.Title>
 
             <DataTable.Title>Delete</DataTable.Title>
           </DataTable.Header>
 
           <DataTable.Row>
             <DataTable.Cell>11 November 2022</DataTable.Cell>
-            <DataTable.Cell >80</DataTable.Cell>
+            <DataTable.Cell>80</DataTable.Cell>
 
             <DataTable.Cell>
               <Button title="Delete"></Button>
@@ -42,7 +43,7 @@ const Categories = () => {
 
           <DataTable.Row>
             <DataTable.Cell>11 November 2022</DataTable.Cell>
-            <DataTable.Cell >80</DataTable.Cell>
+            <DataTable.Cell>80</DataTable.Cell>
             <DataTable.Cell>
               <Button title="Delete"></Button>
             </DataTable.Cell>
