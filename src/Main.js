@@ -1,6 +1,8 @@
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as React from 'react';
-import {View} from 'react-native';
-import {BottomNavigation, Text} from 'react-native-paper';
+import { View } from 'react-native';
+import { BottomNavigation, Text } from 'react-native-paper';
 import AddExpense from './screens/AddExpense';
 import Categories from './screens/Categories';
 import Expenses from './screens/Expenses';
@@ -23,10 +25,10 @@ const Main = () => {
       title: 'Expenses',
       focusedIcon: 'cash-multiple',
     },
-    {key: 'income', title: 'Income', focusedIcon: 'wallet'},
-    {key: 'add', title: 'Add', focusedIcon: 'plus-box'},
+    { key: 'income', title: 'Income', focusedIcon: 'wallet' },
+    { key: 'add', title: 'Add', focusedIcon: 'plus-box' },
 
-    {key: 'categories', title: 'Categories', focusedIcon: 'shape'},
+    { key: 'categories', title: 'Categories', focusedIcon: 'shape' },
     {
       key: 'profile',
       title: 'profile',
@@ -42,15 +44,32 @@ const Main = () => {
     categories: CategoriesRoute,
     profile: ProfileRoute,
   });
-
+  const Stack = createNativeStackNavigator();
+  const Nav = () => {
+    return (
+      <BottomNavigation
+        navigationState={{ index, routes }}
+        onIndexChange={setIndex}
+        renderScene={renderScene}
+      />
+    )
+  }
   return (
-    <BottomNavigation
-      navigationState={{index, routes}}
-      onIndexChange={setIndex}
-      renderScene={renderScene}
-    />
-    // <Login />
-    // <SignUp />
+  
+
+    <NavigationContainer>
+      <Stack.Navigator screenOptions={{
+        headerShown: false
+      }}>
+        <Stack.Screen name="Login" component={Login} />
+
+        <Stack.Screen name="nav" component={Nav} />
+
+        <Stack.Screen name="signup" component={SignUp} />
+
+
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 };
 
