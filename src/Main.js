@@ -55,7 +55,7 @@ const Main = () => {
     )
   }
   return (
-  
+
 
     <NavigationContainer>
       <Stack.Navigator screenOptions={{
@@ -64,6 +64,8 @@ const Main = () => {
         <Stack.Screen name="Login" component={Login} />
 
         <Stack.Screen name="nav" component={Nav} />
+
+
 
         <Stack.Screen name="signup" component={SignUp} />
 
