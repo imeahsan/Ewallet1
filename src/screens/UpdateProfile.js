@@ -1,5 +1,5 @@
 import React from 'react';
-import { TextInput, Button } from 'react-native-paper';
+import { TextInput, } from 'react-native-paper';
 import {
   SafeAreaView,
   ScrollView,
@@ -9,7 +9,7 @@ import {
   View,
 } from 'react-native';
 import { Text } from 'react-native-paper';
-import { Alert } from 'react-native';
+import { Alert, Button } from 'react-native';
 import auth from '@react-native-firebase/auth';
 import { useState } from 'react';
 
@@ -87,19 +87,23 @@ const Settings = ({ navigation }) => {
         />
 
         <Button
+          title="Save"
+
           icon="content-save"
           mode="contained"
           onPress={handleUpdate}
-          style={{ marginHorizontal: 100, marginTop: 50, padding: 5 }}>
+          style={{ marginTop: 5, marginBottom: 5 }}
+>
           Save
         </Button>
         <Button
-          icon="logout"
+          title="Logout"
+          // icon="logout"
           mode="contained"
           onPress={handleLogout}
-          style={{ marginHorizontal: 100, marginTop: 50, padding: 5 }}>
-          Logout
-        </Button>
+          style={{ marginTop: 5, marginBottom: 5 }}
+ />
+
       </View>
     </View>
   );

@@ -38,7 +38,7 @@ const chartConfig = {
 const data = [
   {
     name: "Seoul",
-    population: 21500000,
+    population: 2150000,
     color: "rgba(131, 167, 234, 1)",
     legendFontColor: "#7F7F7F",
     legendFontSize: 15
@@ -50,13 +50,7 @@ const data = [
     legendFontColor: "#7F7F7F",
     legendFontSize: 15
   },
-  {
-    name: "Beijing",
-    population: 527612,
-    color: "red",
-    legendFontColor: "#7F7F7F",
-    legendFontSize: 15
-  },
+
   {
     name: "New York",
     population: 8538000,
