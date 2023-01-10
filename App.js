@@ -23,13 +23,12 @@ import store from './src/store';
 
 const App = () => {
   return (
-    <Provider store={store}>
+
 
 
     <PaperProvider>
       <Main />
     </PaperProvider>
-    </Provider>
 
   );
 };

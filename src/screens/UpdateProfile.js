@@ -1,5 +1,5 @@
-import React from 'react';
-import { TextInput, } from 'react-native-paper';
+import React from "react";
+import { TextInput } from "react-native-paper";
 import {
   SafeAreaView,
   ScrollView,
@@ -7,43 +7,53 @@ import {
   StyleSheet,
   useColorScheme,
   View,
-} from 'react-native';
-import { Text } from 'react-native-paper';
-import { Alert, Button } from 'react-native';
-import auth from '@react-native-firebase/auth';
-import { useState } from 'react';
+} from "react-native";
+import { Text } from "react-native-paper";
+import { Alert, Button } from "react-native";
+import auth, { firebase } from "@react-native-firebase/auth";
+import { useState } from "react";
+import { handleSave, saveData } from "../firebase/firebse_CRUD";
+import { useNavigation } from "@react-navigation/native";
 
 
-const Settings = ({ navigation }) => {
-
-  const [fName, setfname] = useState('')
-  const [lName, setLname] = useState('')
-  const [email, setEmail] = useState('')
-  const [pass, setPass] = useState('')
-
+const Settings = () => {
+  const navigation = useNavigation();
+  const [fName, setfname] = useState("");
+  const [lName, setLname] = useState("");
+  const [email, setEmail] = useState("");
+  const [pass, setPass] = useState("");
 
 
   const handleUpdate = () => {
-    let user = auth().currentUser
-    console.log()
 
-  }
+  };
 
   const handleLogout = () => {
+    // let user = auth().currentUser;
+
+    // saveData(user).then(r => console.log("data saved"));
+    handleSave();
     auth()
       .signOut()
-      .then(() => console.log('User signed out!'));
-    // navigation.navigate("Login")
-  }
+      .then(() => console.log("User signed out!"));
 
+    navigation.navigate("Login");
+  };
+// update password
+  const updatePassword = () => {
+    firebase.auth().currentUser.updatePassword(pass)
+      .then(async (e) => {
+        console.log(await firebase.auth().currentUser);
+      });
+  };
   return (
     <View>
       <View style={{ marginTop: 25 }}>
         <Text
           style={{
             fontSize: 28,
-            fontWeight: 'bold',
-            alignSelf: 'center',
+            fontWeight: "bold",
+            alignSelf: "center",
           }}>
           Settings
         </Text>
@@ -57,7 +67,7 @@ const Settings = ({ navigation }) => {
           style={{ margin: 10 }}
           value={fName}
           onChangeText={(e) => {
-            setfname(e.trim())
+            setfname(e.trim());
           }}
         />
         <TextInput
@@ -68,7 +78,7 @@ const Settings = ({ navigation }) => {
           style={{ margin: 10 }}
           value={lName}
           onChangeText={(e) => {
-            setLname(e.trim())
+            setLname(e.trim());
           }}
         />
         <TextInput
@@ -93,7 +103,7 @@ const Settings = ({ navigation }) => {
           mode="contained"
           onPress={handleUpdate}
           style={{ marginTop: 5, marginBottom: 5 }}
->
+        >
           Save
         </Button>
         <Button
@@ -102,7 +112,7 @@ const Settings = ({ navigation }) => {
           mode="contained"
           onPress={handleLogout}
           style={{ marginTop: 5, marginBottom: 5 }}
- />
+        />
 
       </View>
     </View>

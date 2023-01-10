@@ -13,6 +13,7 @@ import { TouchableOpacity } from 'react-native';
 import Signup from './Signup';
 import auth from '@react-native-firebase/auth';
 import { useState } from 'react';
+import { getDataFromFirebase } from "../firebase/firebse_CRUD";
 
 const Login = ({ navigation }) => {
 
@@ -24,6 +25,7 @@ const Login = ({ navigation }) => {
       .then((abc) => {
         console.log(abc);
         console.log('User signed in!');
+        getDataFromFirebase(abc.user.uid).then(r => console.log(1))
         navigation.navigate("nav")
       })
       // .catch(error => {
@@ -38,7 +40,7 @@ const Login = ({ navigation }) => {
         // console.error(error);
       };
 
-  
+
   return (
     <View>
       <View style={{ marginTop: 25 }}>

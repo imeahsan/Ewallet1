@@ -1,5 +1,5 @@
-import React from 'react';
-import { TextInput, Button } from 'react-native-paper';
+import React from "react";
+import { TextInput, Button } from "react-native-paper";
 import {
   SafeAreaView,
   ScrollView,
@@ -7,56 +7,63 @@ import {
   StyleSheet,
   useColorScheme,
   View,
-} from 'react-native';
-import { Text } from 'react-native-paper';
-import { TouchableOpacity } from 'react-native';
-import { useState } from 'react';
+} from "react-native";
+import { Text } from "react-native-paper";
+import { TouchableOpacity } from "react-native";
+import { useState } from "react";
 
-import auth from '@react-native-firebase/auth';
-
+import auth, { firebase } from "@react-native-firebase/auth";
 
 
 const Signup = ({ navigation }) => {
-  const [firstName, setFirstName] = useState(undefined)
-  const [lastName, setLastName] = useState(undefined)
-  const [email, setEmail] = useState(undefined)
-  const [password, setPassword] = useState(undefined)
-  const [confirmPassword, setConfirmPassword] = useState(undefined)
+  const [firstName, setFirstName] = useState(undefined);
+  const [lastName, setLastName] = useState(undefined);
+  const [email, setEmail] = useState(undefined);
+  const [password, setPassword] = useState(undefined);
+  const [confirmPassword, setConfirmPassword] = useState(undefined);
 
   const handleSignUp = async () => {
 
     if (firstName && lastName && email && password && confirmPassword) {
       if (password === confirmPassword) {
-        alert(password)
+        alert(password);
         auth()
           .createUserWithEmailAndPassword(email, password)
-          .then((abc) => {
+          .then(async (abc) => {
             console.log(abc);
-            console.log('User account created & signed in!');
-            navigation.navigate("nav")
+            console.log("User account created & signed in!");
+            const update = {
+              displayName: firstName + " " + lastName,
+            };
+
+            firebase.auth().currentUser.updateProfile(update).then(async (e) => {
+              console.log(await firebase.auth().currentUser);
+            });
+            navigation.navigate("nav");
           })
+
+
           .catch(error => {
-            if (error.code === 'auth/email-already-in-use') {
-              console.log('That email address is already in use!');
+            if (error.code === "auth/email-already-in-use") {
+              console.log("That email address is already in use!");
             }
 
-            if (error.code === 'auth/invalid-email') {
-              console.log('That email address is invalid!');
+            if (error.code === "auth/invalid-email") {
+              console.log("That email address is invalid!");
             }
             //todo error handling
             console.error(error);
           });
 
-        alert("password matched")
+        alert("password matched");
       }
-      else {
-        alert('passwords donot match')
+    else
+      {
+        alert("passwords donot match");
       }
 
-    }
-
-    else {
-      alert("enter credentials")
+    } else {
+      alert("enter credentials");
 
     }
     // alert(firstName)
@@ -64,7 +71,7 @@ const Signup = ({ navigation }) => {
     // navigation.navigate("Login")
 
 
-  }
+  };
 
   return (
     <View>
@@ -72,8 +79,8 @@ const Signup = ({ navigation }) => {
         <Text
           style={{
             fontSize: 28,
-            fontWeight: 'bold',
-            alignSelf: 'center',
+            fontWeight: "bold",
+            alignSelf: "center",
           }}>
           Create an account
         </Text>
@@ -95,7 +102,9 @@ const Signup = ({ navigation }) => {
           right={<TextInput.Affix text="required" />}
           style={{ margin: 10 }}
           value={lastName}
-          onChangeText={(e) => { setLastName(e) }}
+          onChangeText={(e) => {
+            setLastName(e);
+          }}
         />
         <TextInput
           mode="outlined"
@@ -104,7 +113,10 @@ const Signup = ({ navigation }) => {
           right={<TextInput.Affix text="required" />}
           style={{ margin: 10 }}
           value={email}
-          onChangeText={(e) => { setEmail(e.trim()) }}
+          onChangeText={(e) => {
+            setEmail(e.trim());
+          }}
+          autoComplete="email"
 
         />
         <TextInput
@@ -114,7 +126,9 @@ const Signup = ({ navigation }) => {
           right={<TextInput.Affix text="required" />}
           style={{ margin: 10 }}
           value={password}
-          onChangeText={(e) => { setPassword(e) }}
+          onChangeText={(e) => {
+            setPassword(e);
+          }}
           secureTextEntry={true}
 
         />
@@ -126,16 +140,20 @@ const Signup = ({ navigation }) => {
           right={<TextInput.Affix text="required" />}
           style={{ margin: 10 }}
           value={confirmPassword}
-          onChangeText={(e) => { setConfirmPassword(e) }}
+          onChangeText={(e) => {
+            setConfirmPassword(e);
+          }}
         />
-        <TouchableOpacity style={{ alignSelf: 'center', marginTop: 20 }} onPress={() => { navigation.navigate('Login') }}>
+        <TouchableOpacity style={{ alignSelf: "center", marginTop: 20 }} onPress={() => {
+          navigation.navigate("Login");
+        }}>
           <Text>Already have an account? Login now</Text>
         </TouchableOpacity>
         <Button
           icon="account-plus"
           mode="contained"
           onPress={() => {
-            handleSignUp()
+            handleSignUp();
           }}
           style={{ marginHorizontal: 100, marginTop: 20, padding: 5 }}>
           Signup

@@ -17,7 +17,7 @@ const AddRoute = AddExpense;
 const CategoriesRoute = Categories;
 const ProfileRoute = profile;
 
-const Main = () => {
+const Main = ({navigation}) => {
   const [index, setIndex] = React.useState(0);
   const [routes] = React.useState([
     {
@@ -42,15 +42,16 @@ const Main = () => {
     add: AddRoute,
 
     categories: CategoriesRoute,
-    profile: ProfileRoute,
+    profile: ()=><ProfileRoute navigation={navigation}/>,
   });
   const Stack = createNativeStackNavigator();
-  const Nav = () => {
+  const Nav = ({navigation}) => {
     return (
       <BottomNavigation
         navigationState={{ index, routes }}
         onIndexChange={setIndex}
         renderScene={renderScene}
+        navigation = {navigation}
       />
     )
   }
@@ -61,7 +62,7 @@ const Main = () => {
       <Stack.Navigator screenOptions={{
         headerShown: false
       }}>
-        {/* <Stack.Screen name="Login" component={Login} /> */}
+         <Stack.Screen name="Login" component={Login} />
 
         <Stack.Screen name="nav" component={Nav} />
 

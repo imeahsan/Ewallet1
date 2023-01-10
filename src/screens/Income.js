@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   SafeAreaView,
   ScrollView,
@@ -7,8 +7,8 @@ import {
   useColorScheme,
   Button,
   View,
-} from 'react-native';
-import { Text, TextInput, DataTable } from 'react-native-paper';
+} from "react-native";
+import { Text, TextInput, DataTable } from "react-native-paper";
 import {
 
   ProgressChart,
@@ -16,90 +16,99 @@ import {
 } from "react-native-chart-kit";
 // const data = [{ value: 50 }, { value: 80 }, { value: 90 }, { value: 70 }];
 import { Dimensions } from "react-native";
-import { useState, useEffect } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Alert } from 'react-native';
+import { useState, useEffect } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Alert } from "react-native";
 
 let income = [{
   date: Date.now(),
-  amount: 0
+  amount: 0,
 }, {
   date: Date.now(),
-  amount: 50
+  amount: 50,
 },
 
-]
-
+];
 
 
 // const screenWidth = Dimensions.get("window").width;
 const Income = () => {
   const getData = async () => {
     try {
-      const jsonValue = await AsyncStorage.getItem('@incomeList')
-      let x = JSON.parse(jsonValue)
-      console.log(x);
-      setIncomeList(x)
+      const jsonValue = await AsyncStorage.getItem("@incomeList");
+      let x = JSON.parse(jsonValue);
+      // console.log(x);
+      setIncomeList(x);
 
-      const limit = await AsyncStorage.getItem('@expenseLimit')
-      console.log(limit);
-      limit ? setExpenseLimit(limit) : setExpenseLimit("Not Set")
+      const limit = await AsyncStorage.getItem("@expenseLimit");
+      // console.log(limit);
+      limit ? setExpenseLimit(limit) : setExpenseLimit("Not Set");
     } catch (e) {
       // error reading value
     }
-  }
+  };
 
-  const [expenseLimit, setExpenseLimit] = useState('')
+  const [expenseLimit, setExpenseLimit] = useState("");
 
-  const [limit, setLimit] = useState('')
-  let [newIncome, setNewIncome] = useState('')
-  const [totalIncome, setTotalIncome] = useState(0)
-  const [incomeList, setIncomeList] = useState([])
+  const [limit, setLimit] = useState("");
+  let [newIncome, setNewIncome] = useState("");
+  const [totalIncome, setTotalIncome] = useState(0);
+  const [incomeList, setIncomeList] = useState([]);
   useEffect(() => {
-    getData()
+    getData();
 
 
-  }, [])
+  }, []);
   useEffect(() => {
-    calculateIncome()
+    calculateIncome();
 
 
-  })
+  });
   const addIncome = async () => {
     if (newIncome) {
-      let li = [...incomeList, { date: Date.now(), amount: newIncome }]
+      let li;
+      if (incomeList){
+        li = [...incomeList, { date: Date.now(), amount: newIncome }];
+
+      }else {
+         li = [ { date: Date.now(), amount: newIncome }];
+
+      }
 
       try {
-        const jsonValue = JSON.stringify(li)
-        await AsyncStorage.setItem('@incomeList', jsonValue)
-        alert("Income Added")
-        getData()
+        const jsonValue = JSON.stringify(li);
+        await AsyncStorage.setItem("@incomeList", jsonValue);
+        alert("Income Added");
+        getData();
       } catch (e) {
         // saving error
       }
     } else {
-      alert("Enter Income!!")
+      alert("Enter Income!!");
     }
-  }
+  };
 
   const handleLimitChange = async () => {
-    await AsyncStorage.setItem('@expenseLimit', limit)
-    setExpenseLimit(limit)
+    await AsyncStorage.setItem("@expenseLimit", limit);
+    setExpenseLimit(limit);
 
 
-  }
+  };
 
   const calculateIncome = () => {
-    let totalIncome = 0
-    console.log(incomeList);
-    incomeList.forEach((x) => {
-      console.log(x);
-      totalIncome += parseInt(x.amount)
-    })
-    setTotalIncome(totalIncome)
-    console.log(totalIncome);
-    return totalIncome
-  }
+    let totalIncome = 0;
+    // console.log(incomeList);
+    if (incomeList){
+      incomeList.forEach((x) => {
+        // console.log(x);
+        totalIncome += parseInt(x.amount);
+      });
+      setTotalIncome(totalIncome);
+      // console.log(totalIncome);
+      return totalIncome;
+    }
+
+  };
 
   let incomeID = 0;
 
@@ -111,8 +120,7 @@ const Income = () => {
         style={{ marginTop: 5, marginBottom: 5, marginLeft: 5 }}>
         Income
       </Text>
-      <View style={{ alignItems: 'center' }}>
-        <Circle></Circle>
+      <View style={{ alignItems: "center" }}>
         {/* <ProgressChart
           data={data}
           width={screenWidth}
@@ -125,23 +133,23 @@ const Income = () => {
       </View>
       <View>
         <TextInput
-          label={'Amount'}
+          label={"Amount"}
           placeholder="Income Amount"
           style={{ marginTop: 5, marginBottom: 5 }}
           right={<TextInput.Affix text="required" />}
           value={newIncome}
           onChangeText={(e) => {
-            setNewIncome(e.trim())
+            setNewIncome(e.trim());
           }}
         />
         <Button title="Add Amount" onPress={addIncome} />
         <TextInput
-          label={'Expense Limit'}
+          label={"Expense Limit"}
           placeholder="Expense Limit"
           right={<TextInput.Affix text="required" />}
           style={{ marginTop: 5, marginBottom: 5 }}
           onChangeText={(e) => {
-            setLimit(e.trim())
+            setLimit(e.trim());
           }}
         />
         <Button title="Set Limit" onPress={handleLimitChange}></Button>
@@ -193,7 +201,7 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 100 / 2,
-    backgroundColor: 'red',
+    backgroundColor: "red",
   },
 });
 export default Income;
