@@ -1,18 +1,8 @@
-import React from "react";
-import { TextInput } from "react-native-paper";
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  useColorScheme,
-  View,
-} from "react-native";
-import { Text } from "react-native-paper";
-import { Alert, Button } from "react-native";
+import React, { useEffect, useState } from "react";
+import { Text, TextInput } from "react-native-paper";
+import { Button, StyleSheet, View } from "react-native";
 import auth, { firebase } from "@react-native-firebase/auth";
-import { useState } from "react";
-import { handleSave, saveData } from "../firebase/firebse_CRUD";
+import { handleSave } from "../firebase/firebse_CRUD";
 import { useNavigation } from "@react-navigation/native";
 
 
@@ -20,19 +10,34 @@ const Settings = () => {
   const navigation = useNavigation();
   const [fName, setfname] = useState("");
   const [lName, setLname] = useState("");
-  const [email, setEmail] = useState("");
+  const [cnfrmPass, setCnfrmPass] = useState("");
   const [pass, setPass] = useState("");
 
+  useEffect(() => {
+    let name = firebase.auth().currentUser.displayName;
+    if (name) {
+      let abc = name.split(" ");
+      console.log("f", abc[0], abc[1]);
+
+      setfname(abc[0]);
+      setLname(abc[1]);
+    }
+
+  }, []);
 
   const handleUpdate = () => {
+    const update = {
+      displayName: fName + " " + lName,
+    };
 
+    firebase.auth().currentUser.updateProfile(update).then(async (e) => {
+      console.log(await firebase.auth().currentUser);
+    });
   };
 
   const handleLogout = () => {
-    // let user = auth().currentUser;
 
-    // saveData(user).then(r => console.log("data saved"));
-    handleSave();
+    handleSave(true);
     auth()
       .signOut()
       .then(() => console.log("User signed out!"));
@@ -40,11 +45,29 @@ const Settings = () => {
     navigation.navigate("Login");
   };
 // update password
-  const updatePassword = () => {
-    firebase.auth().currentUser.updatePassword(pass)
-      .then(async (e) => {
-        console.log(await firebase.auth().currentUser);
-      });
+  const handlePasswordUpdate = () => {
+    if (pass && cnfrmPass) {
+      if (pass === cnfrmPass) {
+        try {
+
+          firebase.auth().currentUser.updatePassword(pass)
+            .then(async (e) => {
+              console.log(await firebase.auth().currentUser);
+              alert("Password updated Successfully!!!");
+              setPass("")
+              setCnfrmPass('')
+            });
+        } catch (e) {
+          alert(e.code);
+        }
+      } else {
+        alert("Passwords don't match!!!");
+      }
+    } else {
+      alert("Enter Password");
+
+    }
+
   };
   return (
     <View>
@@ -55,7 +78,7 @@ const Settings = () => {
             fontWeight: "bold",
             alignSelf: "center",
           }}>
-          Settings
+          Profile
         </Text>
       </View>
       <View style={{ marginTop: 50, padding: 10 }}>
@@ -67,7 +90,7 @@ const Settings = () => {
           style={{ margin: 10 }}
           value={fName}
           onChangeText={(e) => {
-            setfname(e.trim());
+            setfname(e);
           }}
         />
         <TextInput
@@ -78,45 +101,76 @@ const Settings = () => {
           style={{ margin: 10 }}
           value={lName}
           onChangeText={(e) => {
-            setLname(e.trim());
+            setLname(e);
           }}
         />
-        <TextInput
-          mode="outlined"
-          label="Email"
-          placeholder="Enter email"
-          right={<TextInput.Affix text="required" />}
-          style={{ margin: 10 }}
-        />
-        <TextInput
-          mode="outlined"
-          label="Password"
-          placeholder="Enter password"
-          right={<TextInput.Affix text="required" />}
-          style={{ margin: 10 }}
-        />
-
         <Button
-          title="Save"
+          title="Update name"
 
           icon="content-save"
           mode="contained"
           onPress={handleUpdate}
           style={{ marginTop: 5, marginBottom: 5 }}
         >
-          Save
+          Update name
         </Button>
-        <Button
-          title="Logout"
-          // icon="logout"
-          mode="contained"
-          onPress={handleLogout}
-          style={{ marginTop: 5, marginBottom: 5 }}
+        <TextInput
+          mode="outlined"
+          label="New Password"
+          placeholder="Enter password"
+          right={<TextInput.Affix text="required" />}
+          style={{ margin: 10 }}
+          secureTextEntry={true}
+          value={pass}
+          onChangeText={(e) => {
+            setPass(e.trim());
+          }}
+        />
+        <TextInput
+          mode="outlined"
+          label="Confirm Password"
+          placeholder="Confirm password"
+          right={<TextInput.Affix text="required" />}
+          style={{ margin: 10 }}
+          secureTextEntry={true}
+          value={cnfrmPass}
+          onChangeText={(e) => {
+            setCnfrmPass(e.trim());
+          }}
         />
 
+        <Button
+          title="Update Password"
+
+          icon="content-save"
+          mode="contained"
+          onPress={handlePasswordUpdate}
+          style={{ marginTop: 5, marginBottom: 5 }}
+        >
+          Update password
+        </Button>
+
+        <Text> </Text>
+        <>
+          <Button
+            title="Logout"
+            // icon="logout"
+            mode="contained"
+            onPress={handleLogout}
+            style={{ marginTop: 50, marginBottom: 5 }}
+
+          > Logout</Button>
+        </>
       </View>
+
+
     </View>
   );
 };
-
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "flex-end",
+  },
+});
 export default Settings;

@@ -90,6 +90,7 @@ const Signup = ({ navigation }) => {
           mode="outlined"
           label="First Name"
           placeholder="Enter first name"
+
           right={<TextInput.Affix text="required" />}
           style={{ margin: 10 }}
           value={firstName}
@@ -109,6 +110,8 @@ const Signup = ({ navigation }) => {
         <TextInput
           mode="outlined"
           label="Email"
+          keyboardType="email-address"
+
           placeholder="Enter email"
           right={<TextInput.Affix text="required" />}
           style={{ margin: 10 }}

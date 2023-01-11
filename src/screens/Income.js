@@ -1,24 +1,9 @@
-import React from "react";
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  useColorScheme,
-  Button,
-  View,
-} from "react-native";
-import { Text, TextInput, DataTable } from "react-native-paper";
-import {
-
-  ProgressChart,
-
-} from "react-native-chart-kit";
+import React, { useEffect, useState } from "react";
 // const data = [{ value: 50 }, { value: 80 }, { value: 90 }, { value: 70 }];
-import { Dimensions } from "react-native";
-import { useState, useEffect } from "react";
+import { Button, ScrollView, StyleSheet, View } from "react-native";
+import { DataTable, Text, TextInput } from "react-native-paper";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Alert } from "react-native";
+import { handleSave } from "../firebase/firebse_CRUD";
 
 let income = [{
   date: Date.now(),
@@ -67,11 +52,11 @@ const Income = () => {
   const addIncome = async () => {
     if (newIncome) {
       let li;
-      if (incomeList){
+      if (incomeList) {
         li = [...incomeList, { date: Date.now(), amount: newIncome }];
 
-      }else {
-         li = [ { date: Date.now(), amount: newIncome }];
+      } else {
+        li = [{ date: Date.now(), amount: newIncome }];
 
       }
 
@@ -79,6 +64,8 @@ const Income = () => {
         const jsonValue = JSON.stringify(li);
         await AsyncStorage.setItem("@incomeList", jsonValue);
         alert("Income Added");
+        handleSave(false);
+        setNewIncome();
         getData();
       } catch (e) {
         // saving error
@@ -91,14 +78,14 @@ const Income = () => {
   const handleLimitChange = async () => {
     await AsyncStorage.setItem("@expenseLimit", limit);
     setExpenseLimit(limit);
-
+    handleSave(false);
 
   };
 
   const calculateIncome = () => {
     let totalIncome = 0;
     // console.log(incomeList);
-    if (incomeList){
+    if (incomeList) {
       incomeList.forEach((x) => {
         // console.log(x);
         totalIncome += parseInt(x.amount);
@@ -112,16 +99,22 @@ const Income = () => {
 
   let incomeID = 0;
 
+  try {
 
-  return (
-    <ScrollView style={{ margin: 5 }}>
-      <Text
-        variant="titleLarge"
-        style={{ marginTop: 5, marginBottom: 5, marginLeft: 5 }}>
-        Income
-      </Text>
-      <View style={{ alignItems: "center" }}>
-        {/* <ProgressChart
+    return (
+      <ScrollView style={{ margin: 5 }}>
+        <View style={{ marginTop: 15 }}>
+          <Text
+            style={{
+              fontSize: 28,
+              fontWeight: "bold",
+              alignSelf: "center",
+            }}>
+            Income
+          </Text>
+        </View>
+        <View style={{ alignItems: "center" }}>
+          {/* <ProgressChart
           data={data}
           width={screenWidth}
           height={220}
@@ -130,67 +123,72 @@ const Income = () => {
           chartConfig={chartConfig}
           hideLegend={false}
         /> */}
-      </View>
-      <View>
-        <TextInput
-          label={"Amount"}
-          placeholder="Income Amount"
-          style={{ marginTop: 5, marginBottom: 5 }}
-          right={<TextInput.Affix text="required" />}
-          value={newIncome}
-          onChangeText={(e) => {
-            setNewIncome(e.trim());
-          }}
-        />
-        <Button title="Add Amount" onPress={addIncome} />
-        <TextInput
-          label={"Expense Limit"}
-          placeholder="Expense Limit"
-          right={<TextInput.Affix text="required" />}
-          style={{ marginTop: 5, marginBottom: 5 }}
-          onChangeText={(e) => {
-            setLimit(e.trim());
-          }}
-        />
-        <Button title="Set Limit" onPress={handleLimitChange}></Button>
-      </View>
-      <View>
-        <Text variant="titleLarge" style={{ marginTop: 50 }}>
-          Total Income : {totalIncome}
-        </Text>
+        </View>
+        <View>
+          <TextInput
+            label={"Amount"}
+            keyboardType="number-pad"
 
-        <Text variant="titleLarge" style={{ marginTop: 50 }}>
-          Expense limit: {expenseLimit}
-        </Text>
-      </View>
-      <View>
-        <Text variant="titleLarge" style={{ marginTop: 50 }}>
-          Income History
-        </Text>
-        <DataTable style={{ marginTop: 5 }}>
-          <DataTable.Header>
-            <DataTable.Title>Date</DataTable.Title>
+            placeholder="Income Amount"
+            style={{ marginTop: 5, marginBottom: 5 }}
+            right={<TextInput.Affix text="required" />}
+            value={newIncome}
+            onChangeText={(e) => {
+              setNewIncome(e.trim());
+            }}
+          />
+          <Button title="Add Income Amount" onPress={addIncome} />
+          <TextInput
+            label={"Expense Limit"}
+            keyboardType="numeric"
 
-            <DataTable.Title numeric>Amount</DataTable.Title>
-          </DataTable.Header>
+            placeholder="Expense Limit"
+            right={<TextInput.Affix text="required" />}
+            style={{ marginTop: 5, marginBottom: 5 }}
+            onChangeText={(e) => {
+              setLimit(e.trim());
+            }}
+          />
+          <Button title="Set Limit" onPress={handleLimitChange}></Button>
+        </View>
+        <View>
+          <Text variant="titleLarge" style={{ marginTop: 50 }}>
+            Total Income : {totalIncome}
+          </Text>
 
-          {incomeList ? incomeList.map(inc => (
-            <DataTable.Row key={incomeID++}>
-              <DataTable.Cell>{Date(inc.date).substring(4, 15)}</DataTable.Cell>
+          <Text variant="titleLarge" style={{ marginTop: 50 }}>
+            Expense limit: {expenseLimit}
+          </Text>
+        </View>
+        <View>
+          <Text variant="titleLarge" style={{ marginTop: 50 }}>
+            Income History
+          </Text>
+          <DataTable style={{ marginTop: 5 }}>
+            <DataTable.Header>
+              <DataTable.Title>Date</DataTable.Title>
 
-              <DataTable.Cell numeric>{inc.amount}</DataTable.Cell>
-            </DataTable.Row>
-          )) : null
-          }
+              <DataTable.Title numeric>Amount</DataTable.Title>
+            </DataTable.Header>
+
+            {incomeList ? incomeList.map(inc => (
+              <DataTable.Row key={incomeID++}>
+                <DataTable.Cell>{Date(inc.date).substring(4, 15)}</DataTable.Cell>
+
+                <DataTable.Cell numeric>{inc.amount}</DataTable.Cell>
+              </DataTable.Row>
+            )) : null
+            }
 
 
-        </DataTable>
-      </View>
-      <Text variant="titleLarge" style={{ marginTop: 50 }}>
-        Total Income
-      </Text>
-    </ScrollView>
-  );
+          </DataTable>
+        </View>
+
+      </ScrollView>
+    );
+  } catch (e) {
+
+  }
 };
 const Circle = () => {
   return <View style={styles.circle} />;

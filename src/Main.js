@@ -10,6 +10,8 @@ import Income from './screens/Income';
 import profile from './screens/UpdateProfile';
 import Login from './screens/Login';
 import SignUp from './screens/Signup';
+import {MD2DarkTheme as DefaultTheme} from "react-native-paper";
+
 // routes
 const ExpensesRoute = Expenses;
 const IncomeRoute = Income;
@@ -58,7 +60,7 @@ const Main = ({navigation}) => {
   return (
 
 
-    <NavigationContainer>
+    <NavigationContainer theme={DefaultTheme}>
       <Stack.Navigator screenOptions={{
         headerShown: false
       }}>

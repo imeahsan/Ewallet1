@@ -1,21 +1,24 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import React from "react";
-import { useState, useEffect } from "react";
-import {
-  SafeAreaView, ScrollView, StatusBar, StyleSheet, useColorScheme, View, Button,
-} from "react-native";
-import { Text, TextInput, DataTable } from "react-native-paper";
+import React, { useEffect, useState } from "react";
+import { Button, ScrollView, View } from "react-native";
+import { DataTable, Text, TextInput } from "react-native-paper";
+import { handleSave } from "../firebase/firebse_CRUD";
 
 
 const Categories = () => {
   const [newCategory, setNewCategory] = useState("");
-  const [categoryList, setCategoryList] = useState([]);
+  const [categoryList, setCategoryList] = useState([{ label: "Utility", value: "Utility" }, {
+    label: "Grocery",
+    value: "Grocery",
+  }]);
   const getData = async () => {
     try {
       const jsonValue = await AsyncStorage.getItem("@categoryList");
       let x = JSON.parse(jsonValue);
       console.log("category List: ", jsonValue);
-      setCategoryList(x);
+      if (x) {
+        setCategoryList(x);
+      }
 
     } catch (e) {
       console.log(e);
@@ -58,6 +61,7 @@ const Categories = () => {
     } else {
       alert("Enter category Name!!");
     }
+    handleSave(false);
   };
 
 
@@ -83,8 +87,18 @@ const Categories = () => {
 
 
   };
-  return (<ScrollView style={{ margin: 5 }}>
-      <Text variant="titleLarge">Add Category</Text>
+  return (
+    <ScrollView style={{ margin: 5 }}>
+      <View style={{ marginTop: 15 }}>
+        <Text
+          style={{
+            fontSize: 28,
+            fontWeight: "bold",
+            alignSelf: "center",
+          }}>
+          Categories
+        </Text>
+      </View>
       <TextInput
         label="Category Name"
         placeholder="Category Name"
@@ -106,15 +120,15 @@ const Categories = () => {
           </DataTable.Header>
 
           {categoryList ? categoryList.map((c) => (<DataTable.Row key={Math.random()}>
-              <DataTable.Cell>{c.label}</DataTable.Cell>
+            <DataTable.Cell>{c.label}</DataTable.Cell>
 
-              <DataTable.Cell>
-                <Button title="Delete" onPress={() => {
-                  handleCategoryDelete(c);
+            <DataTable.Cell>
+              <Button title="Delete" onPress={() => {
+                handleCategoryDelete(c);
 
-                }}></Button>
-              </DataTable.Cell>
-            </DataTable.Row>)) : null}
+              }}></Button>
+            </DataTable.Cell>
+          </DataTable.Row>)) : null}
 
 
         </DataTable>
