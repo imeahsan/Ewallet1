@@ -1,9 +1,11 @@
+/* eslint-disable prettier/prettier */
 import React, { useEffect, useState } from "react";
 import { Text, TextInput } from "react-native-paper";
 import { Button, StyleSheet, View } from "react-native";
 import auth, { firebase } from "@react-native-firebase/auth";
 import { handleSave } from "../firebase/firebse_CRUD";
 import { useNavigation } from "@react-navigation/native";
+
 
 
 const Settings = () => {
