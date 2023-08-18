@@ -16,14 +16,21 @@ const Settings = () => {
   const [pass, setPass] = useState("");
 
   useEffect(() => {
-    let name = firebase.auth().currentUser.displayName;
-    if (name) {
-      let abc = name.split(" ");
-      console.log("f", abc[0], abc[1]);
+    try {
+      let name = firebase.auth().currentUser.displayName;
+      if (name) {
+        let abc = name.split(" ");
+        console.log("f", abc[0], abc[1]);
 
-      setfname(abc[0]);
-      setLname(abc[1]);
+        setfname(abc[0]);
+        setLname(abc[1]);
+      }
+    }catch (e) {
+      // navigation.navigate("Login");
+      navigation.goBack()
+
     }
+
 
   }, []);
 

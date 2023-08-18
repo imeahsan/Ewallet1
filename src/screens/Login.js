@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import React, {useState} from 'react';
 import {Avatar, Button, Text, TextInput} from 'react-native-paper';
 import {

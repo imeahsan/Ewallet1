@@ -20,7 +20,7 @@ const CategoriesRoute = Categories;
 const ProfileRoute = profile;
 
 const Main = ({navigation}) => {
-  const [index, setIndex] = React.useState(0);
+  const [index, setIndex] = React.useState(2);
   const [routes] = React.useState([
     {
       key: 'expenses',
@@ -63,9 +63,10 @@ const Main = ({navigation}) => {
         screenOptions={{
           headerShown: false,
         }}>
+        <Stack.Screen name="nav" component={Nav} />
         <Stack.Screen name="Login" component={Login} />
 
-        <Stack.Screen name="nav" component={Nav} />
+
 
         <Stack.Screen name="signup" component={SignUp} />
       </Stack.Navigator>

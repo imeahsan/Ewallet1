@@ -5,8 +5,10 @@ import auth from '@react-native-firebase/auth';
 
 export const handleSave = logout => {
     let user = auth().currentUser;
+    if (user) {
+        saveData(user).then(r => console.log('data saved'));
 
-    saveData(user).then(r => console.log('data saved'));
+    }
     if (logout) {
         clearData().then(() => console.log('data cleared'));
     }
