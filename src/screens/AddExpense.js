@@ -186,10 +186,11 @@ const AddExpense = () => {
                 <View style={{marginTop: 15}}>
                     <Text
                         style={{
-                            fontSize: 28,
+                            // fontSize: 28,
                             fontWeight: 'bold',
                             alignSelf: 'center',
-                        }}>
+                        }}
+                        variant="titleLarge">
                         Add Expense
                     </Text>
                 </View>
@@ -252,7 +253,7 @@ const AddExpense = () => {
                     />
 
                     <View style={{margin: 10, height: 200}}>
-                        <Text>Category</Text>
+                        <Text  variant="titleMedium">Category</Text>
 
                         <ScrollView >
                             <RadioButton.Group onValueChange={newValue => setValue(newValue)} value={value}
@@ -274,7 +275,6 @@ const AddExpense = () => {
 
                     <Button
                         icon="content-save"
-                        title="Save"
                         mode="contained"
                         onPress={handleAddExpense}
                         style={{marginHorizontal: 50, margin: 50, marginTop: 25, padding: 5}}>ADD</Button>

@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import React, {useEffect, useState} from "react";
-import {Dimensions, ScrollView, StyleSheet, TouchableOpacity, View} from "react-native";
-import {DataTable, Modal, Portal, Text, TextInput} from "react-native-paper";
+import {Dimensions, Keyboard, ScrollView, TouchableOpacity, TouchableWithoutFeedback, View} from "react-native";
+import {Button, DataTable, Dialog, Portal, Text, TextInput} from "react-native-paper";
 import {PieChart} from "react-native-chart-kit";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -28,7 +28,7 @@ const Expenses = () => {
 
     const [chartData, setChartData] = useState();
     const [expenseList, setExpenseList] = useState();
-    const [filteredExpenseList, setFilteredExpenseList] = useState();
+    const [filteredExpenseList, setFilteredExpenseList] = useState([]);
     const [visible, setVisible] = React.useState(false);
     /// modal data
     const [Title, setTitle] = useState("");
@@ -36,7 +36,8 @@ const Expenses = () => {
     const [category, setCategory] = useState("");
     const [amount, setAmount] = useState("");
     const [note, setNote] = useState("");
-    // const [filterInput, setFilterInput] = useState("");
+
+    const [filterInput, setFilterInput] = useState("");
     const displayModal = (e) => {
         setTitle(e.title);
         setModalDate(e.date);
@@ -78,7 +79,7 @@ const Expenses = () => {
 
     const getData = async () => {
         try {
-         getCategoryData()
+            getCategoryData()
                 .then(r => getExpenseData());
 
         } catch (e) {
@@ -88,7 +89,7 @@ const Expenses = () => {
     useEffect(() => {
 
         getData();
-        setTimeout(generateChartData,3000)
+        setTimeout(generateChartData, 3000)
         console.log('await', expenseList);//
     }, []);
 
@@ -153,40 +154,54 @@ const Expenses = () => {
 
 
     return (
-        <>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+
             <ScrollView>
                 <Portal>
-                    <Modal visible={visible} onDismiss={hideModal} contentContainerStyle={containerStyle}>
-                        <Text variant="headlineMedium">Expense Details </Text>
-                        <Text variant="bodyLarge">Title: {Title}</Text>
-                        <Text variant="bodyLarge">Date:{new Date(modalDate).toString().substr(0, 24)}</Text>
-                        <Text variant="bodyLarge">Category: {category}</Text>
-                        <Text variant="bodyLarge">Amount: {amount}</Text>
-                        <Text variant="bodyLarge">Note: {note}</Text>
+                    {/*<Modal visible={visible} onDismiss={hideModal} contentContainerStyle={containerStyle}>*/}
+                    {/*    <Text variant="headlineMedium">Expense Details </Text>*/}
+                    {/*    <Text variant="bodyLarge">Title: {Title}</Text>*/}
+                    {/*    <Text variant="bodyLarge">Date:{new Date(modalDate).toString().substr(0, 24)}</Text>*/}
+                    {/*    <Text variant="bodyLarge">Category: {category}</Text>*/}
+                    {/*    <Text variant="bodyLarge">Amount: {amount}</Text>*/}
+                    {/*    <Text variant="bodyLarge">Note: {note}</Text>*/}
 
 
-                    </Modal>
+                    {/*</Modal>*/}
+                    <Dialog visible={visible} onDismiss={hideModal}>
+                        <Dialog.Title>Title: {Title}</Dialog.Title>
+                        <Dialog.Content>
+                            <Text variant="bodyMedium">Date:{new Date(modalDate).toString().substr(0, 24)}</Text>
+                            <Text variant="bodyMedium">Category: {category}</Text>
+                            <Text variant="bodyMedium">Amount: {amount}</Text>
+                            <Text variant="bodyMedium">Note: {note}</Text>
+                        </Dialog.Content>
+                        <Dialog.Actions>
+                            <Button onPress={hideModal} >Close</Button>
+                        </Dialog.Actions>
+                    </Dialog>
                 </Portal>
 
-                <View style={{margin: 5}}>
+                <View style={{margin: 5, padding: 10}}>
 
                     <View style={{marginTop: 15}}>
                         <Text
                             style={{
-                                fontSize: 28,
+                                // fontSize: 28,
                                 fontWeight: "bold",
                                 alignSelf: "center",
-                            }}>
+                            }}
+                            variant="titleLarge">
                             Expenses
                         </Text>
                     </View>
                     <View style={{alignItems: "center"}}>
                         {/* <Circle></Circle> */}
-                        { chartData  ? <TouchableOpacity onPress={generateChartData}>
+                        {chartData ? <TouchableOpacity onPress={generateChartData}>
                                 <PieChart
                                     data={chartData}
                                     width={screenWidth}
-                                    height={220}
+                                    height={175}
                                     chartConfig={chartConfig}
                                     accessor={"amount"}
                                     backgroundColor={"transparent"}
@@ -201,7 +216,7 @@ const Expenses = () => {
                         }
 
                     </View>
-                    <Text variant="titleLarge" style={{marginTop: 5}}>
+                    <Text variant="titleMedium" style={{marginTop: 5}}>
                         Apply Filters
                     </Text>
 
@@ -210,17 +225,26 @@ const Expenses = () => {
                         label="Filters"
                         placeholder="Category, title, description"
                         style={{marginTop: 5}}
+                        value={filterInput}
                         onChangeText={(e) => {
+                            setFilterInput(e)
                             filterList(e);
+
                         }}
+                        right={<TextInput.Icon icon="close" onPress={()=> {
+                            setFilterInput("")
+                            filterList("");
+
+                        }} />}
+
                     />
-                    <Text variant="titleLarge" style={{marginTop: 25}}>
+                    <Text variant="titleMedium" style={{marginTop: 25}}>
                         Expense History
                     </Text>
 
-                        <View>
+                    <View>
 
-                        <DataTable style={{marginTop: 5, height:250}}>
+                        <DataTable style={{marginTop: 5, height: filteredExpenseList.length>0?250:50}}>
                             <DataTable.Header>
                                 <DataTable.Title>Date</DataTable.Title>
 
@@ -230,36 +254,38 @@ const Expenses = () => {
                             </DataTable.Header>
                             <ScrollView>
 
-                            {filteredExpenseList ?
-                                filteredExpenseList.map((e) => (
-                                    <TouchableOpacity onPress={() => {
-                                        displayModal(e);
-                                    }} key={expensekey++} on>
-                                        <DataTable.Row>
-                                            <DataTable.Cell>{new Date(e.date).toString().substr(4, 6)}</DataTable.Cell>
+                                {filteredExpenseList ?
+                                    filteredExpenseList.map((e) => (
+                                        <TouchableOpacity onPress={() => {
+                                            displayModal(e);
+                                        }} key={expensekey++} on>
+                                            <DataTable.Row>
+                                                <DataTable.Cell>{new Date(e.date).toString().substr(4, 6)}</DataTable.Cell>
 
-                                            <DataTable.Cell>{e.category}</DataTable.Cell>
-                                            <DataTable.Cell> {e.title}</DataTable.Cell>
+                                                <DataTable.Cell>{e.category}</DataTable.Cell>
+                                                <DataTable.Cell> {e.title}</DataTable.Cell>
 
-                                            <DataTable.Cell numeric>{e.amount}</DataTable.Cell>
-                                        </DataTable.Row>
+                                                <DataTable.Cell numeric>{e.amount}</DataTable.Cell>
+                                            </DataTable.Row>
 
-                                    </TouchableOpacity>
-                                )) : null}
+                                        </TouchableOpacity>
+                                    )) : null}
 
 
-                            {/*<DataTable.Pagination*/}
-                            {/*    page={1}*/}
-                            {/*    numberOfPages={3}*/}
-                            {/*    onPageChange={(page) => { console.log(page); }}*/}
-                            {/*    label="1-2 of 6"*/}
-                            {/*/>*/}
-                          </ScrollView>
+                                {/*<DataTable.Pagination*/}
+                                {/*    page={1}*/}
+                                {/*    numberOfPages={3}*/}
+                                {/*    onPageChange={(page) => { console.log(page); }}*/}
+                                {/*    label="1-2 of 6"*/}
+                                {/*/>*/}
+                            </ScrollView>
                         </DataTable>
-                        </View>
+                        {filteredExpenseList.length>0?null:                        <Text>No record found</Text>
+                        }
+                    </View>
                 </View>
             </ScrollView>
-        </>
+        </TouchableWithoutFeedback>
 
     );
 };

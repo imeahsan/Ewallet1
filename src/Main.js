@@ -1,3 +1,5 @@
+/* eslint-disable prettier/prettier */
+
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import * as React from 'react';
@@ -26,16 +28,17 @@ const Main = ({navigation}) => {
       key: 'expenses',
       title: 'Expenses',
       focusedIcon: 'cash-multiple',
+      // unfocusedIcon:'cash-multiple-outline'
     },
     {key: 'income', title: 'Income', focusedIcon: 'wallet'},
     {key: 'add', title: 'Add', focusedIcon: 'plus-box'},
 
     {key: 'categories', title: 'Categories', focusedIcon: 'shape'},
-    {
-      key: 'profile',
-      title: 'profile',
-      focusedIcon: 'account',
-    },
+    // {
+    //   key: 'profile',
+    //   title: 'profile',
+    //   focusedIcon: 'account',
+    // },
   ]);
 
   const renderScene = BottomNavigation.SceneMap({

@@ -1,8 +1,8 @@
 /* eslint-disable prettier/prettier */
 import React, {useEffect, useState} from "react";
 // const data = [{ value: 50 }, { value: 80 }, { value: 90 }, { value: 70 }];
-import {Button, ScrollView, StyleSheet, View} from "react-native";
-import {DataTable, Text, TextInput} from "react-native-paper";
+import { ScrollView, StyleSheet, View} from "react-native";
+import {DataTable, Text, TextInput,Button} from "react-native-paper";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {handleSave} from "../firebase/firebse_CRUD";
 
@@ -104,7 +104,7 @@ const Income = () => {
     try {
 
         return (
-            <ScrollView style={{margin: 5}}>
+            <View style={{margin: 5}}>
                 <View style={{marginTop: 15}}>
                     <Text
                         style={{
@@ -115,18 +115,8 @@ const Income = () => {
                         Income
                     </Text>
                 </View>
-                <View style={{alignItems: "center"}}>
-                    {/* <ProgressChart
-          data={data}
-          width={screenWidth}
-          height={220}
-          strokeWidth={16}
-          radius={32}
-          chartConfig={chartConfig}
-          hideLegend={false}
-        /> */}
-                </View>
-                <View>
+
+                <View style={{padding:10}}>
                     <TextInput
                         label={"Amount"}
                         keyboardType="number-pad"
@@ -138,7 +128,10 @@ const Income = () => {
                             setNewIncome(e.trim());
                         }}
                     />
-                    <Button title="Add Income Amount" onPress={addIncome}/>
+                    <Button  onPress={addIncome}
+                             icon="cash-multiple"
+                             mode="contained"
+                    >Add Income Amount</Button>
                     <TextInput
                         label={"Expense Limit"}
                         keyboardType="numeric"
@@ -150,44 +143,46 @@ const Income = () => {
                             setLimit(e.trim());
                         }}
                     />
-                    <Button title="Set Limit" onPress={handleLimitChange}></Button>
+                    <Button   icon="cash-lock"
+                              mode="contained" onPress={handleLimitChange}>Set Limit</Button>
+
+                    <View>
+                        <Text variant="titleMedium" style={{marginTop: 15}}>
+                            Total Income : {totalIncome}
+                        </Text>
+
+                        <Text variant="titleMedium" style={{marginTop: 15}}>
+                            Expense limit: {expenseLimit}
+                        </Text>
+                    </View>
+                    <View>
+                        <Text variant="titleMedium" style={{marginTop: 15}}>
+                            Income History
+                        </Text>
+                        <DataTable style={{marginTop: 0, height: 300}}>
+
+                            <DataTable.Header>
+                                <DataTable.Title>Date</DataTable.Title>
+
+                                <DataTable.Title numeric>Amount</DataTable.Title>
+                            </DataTable.Header>
+                            <ScrollView>
+                                {incomeList ? incomeList.map(inc => (
+                                    <DataTable.Row key={incomeID++}>
+                                        <DataTable.Cell>{Date(inc.date).substring(4, 15)}</DataTable.Cell>
+
+                                        <DataTable.Cell numeric>{inc.amount}</DataTable.Cell>
+                                    </DataTable.Row>
+                                )) : null
+                                }
+
+
+                            </ScrollView>
+                        </DataTable>
+                    </View>
                 </View>
-                <View>
-                    <Text variant="titleLarge" style={{marginTop: 25}}>
-                        Total Income : {totalIncome}
-                    </Text>
 
-                    <Text variant="titleLarge" style={{marginTop: 25}}>
-                        Expense limit: {expenseLimit}
-                    </Text>
-                </View>
-                <View>
-                    <Text variant="titleLarge" style={{marginTop: 25}}>
-                        Income History
-                    </Text>
-                    <DataTable style={{marginTop: 5, height: 300}}>
-
-                          <DataTable.Header>
-                              <DataTable.Title>Date</DataTable.Title>
-
-                              <DataTable.Title numeric>Amount</DataTable.Title>
-                          </DataTable.Header>
-                        <ScrollView>
-                          {incomeList ? incomeList.map(inc => (
-                              <DataTable.Row key={incomeID++}>
-                                  <DataTable.Cell>{Date(inc.date).substring(4, 15)}</DataTable.Cell>
-
-                                  <DataTable.Cell numeric>{inc.amount}</DataTable.Cell>
-                              </DataTable.Row>
-                          )) : null
-                          }
-
-
-                      </ScrollView>
-                    </DataTable>
-                </View>
-
-            </ScrollView>
+            </View>
         );
     } catch (e) {
 

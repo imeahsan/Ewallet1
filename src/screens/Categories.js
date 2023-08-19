@@ -2,8 +2,8 @@
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, {useEffect, useState} from 'react';
-import {Button, ScrollView, View} from 'react-native';
-import {DataTable, Text, TextInput} from 'react-native-paper';
+import {ScrollView, StyleSheet, View} from 'react-native';
+import {Button, DataTable, Snackbar, Text, TextInput} from 'react-native-paper';
 import {handleSave} from '../firebase/firebse_CRUD';
 
 const Categories = () => {
@@ -35,29 +35,38 @@ const Categories = () => {
     const handleAddCategory = async () => {
         if (newCategory) {
             let li;
-
-            if (categoryList) {
-                li = [...categoryList, {label: newCategory, value: newCategory}];
+            console.log(categoryList)
+            let tmp = {label: newCategory, value: newCategory}
+            console.log(tmp)
+            if (categoryList.length > 5) {
+                showSnackBar('Only 6 categories can be added')
+                return
+            }
+            if (categoryList.some(item => item.label === tmp.label)) {
+                showSnackBar('Duplicate category name')
             } else {
-                li = [{label: newCategory, value: newCategory}];
-            }
-            setCategoryList(li);
+                if (categoryList) {
+                    li = [...categoryList, {label: newCategory, value: newCategory}];
+                } else {
+                    li = [{label: newCategory, value: newCategory}];
+                }
+                setCategoryList(li);
+                try {
+                    const jsonValue = JSON.stringify(li);
+                    await AsyncStorage.setItem('@categoryList', jsonValue);
+                    showSnackBar('Category Added!!');
+                } catch (e) {
+                    // error reading value
+                    console.log(e);
+                }
+                getData();
+                handleSave(false);
 
-            try {
-                const jsonValue = JSON.stringify(li);
-                await AsyncStorage.setItem('@categoryList', jsonValue);
-                alert('Category Added!!');
-            } catch (e) {
-                // error reading value
-                console.log(e);
             }
-            console.log(categoryList);
 
-            getData();
         } else {
-            alert('Enter category Name!!');
+            showSnackBar('Enter category Name!!');
         }
-        handleSave(false);
     };
 
     const handleCategoryDelete = async c => {
@@ -73,67 +82,107 @@ const Categories = () => {
             try {
                 const jsonValue = JSON.stringify(categoryList);
                 await AsyncStorage.setItem('@categoryList', jsonValue);
-                // alert("Category Added!!")
+                showSnackBar("Category deleted!!")
             } catch (e) {
                 // error reading value
                 console.log(e);
             }
         }
     };
+
+    const [message, setMessage] = useState("");
+    const [visible, setVisible] = useState(false);
+    const onToggleSnackBar = () => setVisible(!visible);
+    const onDismissSnackBar = () => setVisible(false);
+    const showSnackBar = (msg) => {
+        setMessage(msg)
+        console.log(message)
+        onToggleSnackBar()
+        // setTimeout(onToggleSnackBar, 3000)
+    }
     return (
-        <ScrollView style={{margin: 5}}>
+        <View style={{margin: 0, height: '100%'}}>
             <View style={{marginTop: 15}}>
                 <Text
+                    variant="titleLarge"
                     style={{
-                        fontSize: 28,
                         fontWeight: 'bold',
                         alignSelf: 'center',
                     }}>
                     Categories
                 </Text>
             </View>
-            <TextInput
-                label="Category Name"
-                placeholder="Category Name"
-                right={<TextInput.Affix text="required"/>}
-                style={{marginTop: 5, marginBottom: 5}}
-                onChangeText={e => {
-                    setNewCategory(e.trim());
-                }}
-            />
-            <Button title="Add Category" onPress={handleAddCategory}/>
+            <View style={{padding: 10}}>
+                <TextInput
+                    label="Category Name"
+                    placeholder="Category Name"
+                    right={<TextInput.Affix text="required"/>}
+                    style={{marginTop: 5, marginBottom: 5}}
+                    onChangeText={e => {
+                        setNewCategory(e.trim());
+                    }}
+                />
+                <Button onPress={handleAddCategory} mode='contained' icon="shape-plus">Add Category</Button>
 
-            <View style={{marginTop: 25, marginBottom: 5}}>
-                <Text variant="titleLarge">Categories</Text>
-                <DataTable style={{marginTop: 5, height: 475}}>
+                <View style={{marginTop: 25, marginBottom: 5}}>
+                    <Text variant="titleMedium">Categories</Text>
+                    <DataTable style={{marginTop: 5, height: 350}}>
 
-                    <DataTable.Header>
-                        <DataTable.Title>Category</DataTable.Title>
+                        <DataTable.Header>
+                            <DataTable.Title>Category</DataTable.Title>
 
-                        <DataTable.Title>Delete</DataTable.Title>
-                    </DataTable.Header>
-<ScrollView>
-                    {categoryList
-                        ? categoryList.map(c => (
-                            <DataTable.Row key={Math.random()}>
-                                <DataTable.Cell>{c.label}</DataTable.Cell>
+                            <DataTable.Title>Delete</DataTable.Title>
+                        </DataTable.Header>
+                        <ScrollView>
+                            {categoryList
+                                ? categoryList.map(c => (
+                                    <DataTable.Row key={Math.random()}>
+                                        <DataTable.Cell>{c.label}</DataTable.Cell>
 
-                                <DataTable.Cell>
-                                    <Button
-                                        title="Delete"
-                                        onPress={() => {
-                                            handleCategoryDelete(c);
-                                        }}
-                                    />
-                                </DataTable.Cell>
-                            </DataTable.Row>
-                        ))
-                        : null}
-</ScrollView>
-                </DataTable>
+                                        <DataTable.Cell>
+                                            <Button
+                                                icon="delete"
+                                                buttonColor={'transparent'}
+                                                textColor='red'
+                                                rippleColor='transparent'
+                                                mode="contained"
+                                                onPress={() => {
+                                                    handleCategoryDelete(c);
+                                                }}
+                                            />
+                                        </DataTable.Cell>
+                                    </DataTable.Row>
+                                ))
+                                : null}
+                        </ScrollView>
+                    </DataTable>
+                </View>
             </View>
-        </ScrollView>
+            <Snackbar
+                style={{
+                    marginBottom: -5, margin: 25, alignContent: 'center', position: 'absolute',
+                    bottom: 0,
+                }}
+                duration={3000}
+                visible={visible}
+                icon="information-outline"
+                onDismiss={onDismissSnackBar}
+            >
+                <View style={{backgroundColor: 'transparent', ...styles.centeredContent}}>
+                    <Text style={{backgroundColor: 'transparent', ...styles.centeredContent}}>{message}</Text>
+                </View>
+
+            </Snackbar>
+        </View>
     );
 };
 
+const styles = StyleSheet.create({
+    centeredContent: {
+
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: "black"
+    },
+})
 export default Categories;
