@@ -20,8 +20,17 @@ const Categories = () => {
             const jsonValue = await AsyncStorage.getItem('@categoryList');
             let x = JSON.parse(jsonValue);
             console.log('category List: ', jsonValue);
-            if (x) {
+            if (x.length>0) {
                 setCategoryList(x);
+            }else {
+                const jsonValue = JSON.stringify([
+                    {label: 'Utility', value: 'Utility'},
+                    {
+                        label: 'Grocery',
+                        value: 'Grocery',
+                    },
+                ]);
+                await AsyncStorage.setItem('@categoryList', jsonValue);
             }
         } catch (e) {
             console.log(e);
@@ -52,8 +61,7 @@ const Categories = () => {
                 }
                 setCategoryList(li);
                 try {
-                    const jsonValue = JSON.stringify(li);
-                    await AsyncStorage.setItem('@categoryList', jsonValue);
+
                     showSnackBar('Category Added!!');
                 } catch (e) {
                     // error reading value

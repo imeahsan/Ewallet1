@@ -2,19 +2,9 @@
 import React, {useEffect, useState} from "react";
 // const data = [{ value: 50 }, { value: 80 }, { value: 90 }, { value: 70 }];
 import { ScrollView, StyleSheet, View} from "react-native";
-import {DataTable, Text, TextInput,Button} from "react-native-paper";
+import {DataTable, Text, TextInput, Button, Snackbar} from "react-native-paper";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {handleSave} from "../firebase/firebse_CRUD";
-
-let income = [{
-    date: Date.now(),
-    amount: 0,
-}, {
-    date: Date.now(),
-    amount: 50,
-},
-
-];
 
 
 // const screenWidth = Dimensions.get("window").width;
@@ -68,19 +58,26 @@ const Income = () => {
                 handleSave(false);
                 setNewIncome('');
                 getData();
+                showSnackBar('Income Added!!')
             } catch (e) {
                 // saving error
             }
         } else {
-            alert("Enter Income!!");
+            showSnackBar("Enter Income!!");
         }
     };
 
     const handleLimitChange = async () => {
-        await AsyncStorage.setItem("@expenseLimit", limit);
-        setExpenseLimit(limit);
-        handleSave(false);
-        setLimit('')
+      if (limit){
+          await AsyncStorage.setItem("@expenseLimit", limit);
+          setExpenseLimit(limit);
+          handleSave(false);
+          setLimit('')
+          showSnackBar("Limit updated!!")
+
+      }else{
+          showSnackBar("Enter limit amount!!")
+      }
 
     };
 
@@ -100,15 +97,26 @@ const Income = () => {
     };
 
     let incomeID = 0;
-
+    const [message, setMessage] = useState("");
+    const [visible, setVisible] = useState(false);
+    const onToggleSnackBar = () => setVisible(!visible);
+    const onDismissSnackBar = () => setVisible(false);
+    const showSnackBar = (msg) => {
+        onToggleSnackBar()
+        setMessage(msg)
+        console.log(message)
+        onToggleSnackBar()
+        // setTimeout(onToggleSnackBar, 3000)
+    }
     try {
 
         return (
-            <View style={{margin: 5}}>
+            <View style={{margin: 0, height: '100%'}}>
                 <View style={{marginTop: 15}}>
                     <Text
+                        variant="titleLarge"
+
                         style={{
-                            fontSize: 28,
                             fontWeight: "bold",
                             alignSelf: "center",
                         }}>
@@ -181,7 +189,21 @@ const Income = () => {
                         </DataTable>
                     </View>
                 </View>
+                <Snackbar
+                    style={{
+                        marginBottom: -5, margin: 25, alignContent: 'center', position: 'absolute',
+                        bottom: 0,
+                    }}
+                    duration={3000}
+                    visible={visible}
+                    icon="information-outline"
+                    onDismiss={onDismissSnackBar}
+                >
+                    <View style={{backgroundColor: 'transparent', ...styles.centeredContent}}>
+                        <Text style={{backgroundColor: 'transparent', ...styles.centeredContent}}>{message}</Text>
+                    </View>
 
+                </Snackbar>
             </View>
         );
     } catch (e) {
@@ -198,6 +220,11 @@ const styles = StyleSheet.create({
         height: 100,
         borderRadius: 100 / 2,
         backgroundColor: "red",
+    },  centeredContent: {
+
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: "black"
     },
 });
 export default Income;
