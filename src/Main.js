@@ -67,6 +67,7 @@ const Main = ({navigation}) => {
           headerShown: false,
         }}>
         <Stack.Screen name="nav" component={Nav} />
+
         <Stack.Screen name="Login" component={Login} />
 
 

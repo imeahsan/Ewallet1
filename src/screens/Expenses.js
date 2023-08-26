@@ -27,8 +27,8 @@ const colors = ["#800000", "#FF00FF", "#008000", "#808000", "#808080", "#000080"
 const Expenses = () => {
 
     const [chartData, setChartData] = useState();
-    const [expenseList, setExpenseList] = useState();
-    const [filteredExpenseList, setFilteredExpenseList] = useState([]);
+    const [expenseList, setExpenseList] = useState([]);
+    const [filteredExpenseList, setFilteredExpenseList] = useState([{}]);
     const [visible, setVisible] = React.useState(false);
     /// modal data
     const [Title, setTitle] = useState("");
@@ -49,53 +49,47 @@ const Expenses = () => {
 
     const showModal = () => setVisible(true);
     const hideModal = () => setVisible(false);
-    const containerStyle = {backgroundColor: "grey", padding: 20};
     const [categoryList, setCategoryList] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
     const getExpenseData = async () => {
         try {
             const jsonValue = await AsyncStorage.getItem("@expenses");
             console.log(jsonValue)
             let x = JSON.parse(jsonValue);
-            // console.log(x);
             setExpenseList(x);
             setFilteredExpenseList(x);
             // generateChartData()
-
+            generateChartData();
         } catch (e) {
-            console.log(e);
+            console.error(e);
         }
     };
 
     const getCategoryData = async () => {
         try {
+            const jsonValue = AsyncStorage.getItem("@categoryList").then((value) => {
+                setCategoryList(JSON.parse(value));
+                console.log("Category: ", value);
+            });
 
-            // console.log(await firebase.auth().currentUser);
 
         } catch (e) {
-            console.log(e);
+            console.error(e);
         }
     };
 
-    const getData = async () => {
+    const getData = () => {
         try {
             getCategoryData()
                 .then(r => getExpenseData());
+                // setTimeout(() =>,1000);
 
         } catch (e) {
-            console.log(e.message);
+            console.error(e.message);
         }
     }
-    useEffect(() => {
-
-        getData();
-        setTimeout(generateChartData, 3000)
-        console.log('await', expenseList);//
-    }, []);
 
 
     const getExpenseByCategory = (input) => {
-        // console.log(input);
         let filtered = [];
         for (let i = 0; i < expenseList.length; i++) {
 
@@ -105,7 +99,6 @@ const Expenses = () => {
             }
         }
         let exp = 0;
-        // console.log(456);
         for (let i = 0; i < filtered.length; i++) {
             exp += parseInt(filtered[i].amount);
         }
@@ -113,25 +106,40 @@ const Expenses = () => {
         return exp;
 
     };
-    const generateChartData = async () => {
-        const jsonValue = await AsyncStorage.getItem("@categoryList");
-        setCategoryList(await JSON.parse(jsonValue));
-        console.log(categoryList)
-        let x = [];
 
-        for (let i = 0; i < categoryList.length; i++) {
-            let item = {
-                legendFontSize: 15,
-            };
-            item.name = categoryList[i].label;
-            item.legendFontColor = colors[i];
-            item.color = colors[i];
-            item.amount = getExpenseByCategory(categoryList[i].label);
-            x.push(item);
-        }
+    const generateChartData = () => {
 
-        setChartData(x);
+      if (expenseList.length>0 && categoryList.length>0){
+          let x = [];
+
+          for (let i = 0; i < categoryList.length; i++) {
+              let item = {
+                  legendFontSize: 15,
+              };
+              item.name = categoryList[i].label;
+              item.legendFontColor = colors[i];
+              item.color = colors[i];
+              item.amount = getExpenseByCategory(categoryList[i].label);
+
+
+              x.push(item);
+          }
+
+          setChartData(x);
+      }
+        console.log("chart Data: ", chartData)
     };
+    useEffect(() => {
+
+        getData();
+
+    }, []);
+
+    useEffect(() => {
+
+       generateChartData();
+
+    }, [categoryList, expenseList]);
 
 
     const filterList = (input) => {
@@ -158,16 +166,7 @@ const Expenses = () => {
 
             <ScrollView>
                 <Portal>
-                    {/*<Modal visible={visible} onDismiss={hideModal} contentContainerStyle={containerStyle}>*/}
-                    {/*    <Text variant="headlineMedium">Expense Details </Text>*/}
-                    {/*    <Text variant="bodyLarge">Title: {Title}</Text>*/}
-                    {/*    <Text variant="bodyLarge">Date:{new Date(modalDate).toString().substr(0, 24)}</Text>*/}
-                    {/*    <Text variant="bodyLarge">Category: {category}</Text>*/}
-                    {/*    <Text variant="bodyLarge">Amount: {amount}</Text>*/}
-                    {/*    <Text variant="bodyLarge">Note: {note}</Text>*/}
 
-
-                    {/*</Modal>*/}
                     <Dialog visible={visible} onDismiss={hideModal}>
                         <Dialog.Title>Title: {Title}</Dialog.Title>
                         <Dialog.Content>
@@ -177,7 +176,7 @@ const Expenses = () => {
                             <Text variant="bodyMedium">Note: {note}</Text>
                         </Dialog.Content>
                         <Dialog.Actions>
-                            <Button onPress={hideModal} >Close</Button>
+                            <Button onPress={hideModal}>Close</Button>
                         </Dialog.Actions>
                     </Dialog>
                 </Portal>
@@ -197,7 +196,7 @@ const Expenses = () => {
                     </View>
                     <View style={{alignItems: "center"}}>
                         {/* <Circle></Circle> */}
-                        {chartData ? <TouchableOpacity onPress={generateChartData}>
+                        {chartData ? <TouchableWithoutFeedback onPress={generateChartData}>
                                 <PieChart
                                     data={chartData}
                                     width={screenWidth}
@@ -209,7 +208,7 @@ const Expenses = () => {
                                     center={[10, 10]}
                                     absolute
                                 />
-                            </TouchableOpacity>
+                            </TouchableWithoutFeedback>
                             : null
 
 
@@ -231,11 +230,11 @@ const Expenses = () => {
                             filterList(e);
 
                         }}
-                        right={<TextInput.Icon icon="close" onPress={()=> {
+                        right={<TextInput.Icon icon="close" onPress={() => {
                             setFilterInput("")
                             filterList("");
 
-                        }} />}
+                        }}/>}
 
                     />
                     <Text variant="titleMedium" style={{marginTop: 25}}>
@@ -244,7 +243,7 @@ const Expenses = () => {
 
                     <View>
 
-                        <DataTable style={{marginTop: 5, height: filteredExpenseList.length>0?250:50}}>
+                        <DataTable style={{marginTop: 5, height: filteredExpenseList ? 250 : 50}}>
                             <DataTable.Header>
                                 <DataTable.Title>Date</DataTable.Title>
 
@@ -272,15 +271,9 @@ const Expenses = () => {
                                     )) : null}
 
 
-                                {/*<DataTable.Pagination*/}
-                                {/*    page={1}*/}
-                                {/*    numberOfPages={3}*/}
-                                {/*    onPageChange={(page) => { console.log(page); }}*/}
-                                {/*    label="1-2 of 6"*/}
-                                {/*/>*/}
                             </ScrollView>
                         </DataTable>
-                        {filteredExpenseList.length>0?null:                        <Text>No record found</Text>
+                        {filteredExpenseList ? null : <Text>No record found</Text>
                         }
                     </View>
                 </View>
